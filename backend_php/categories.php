@@ -1,6 +1,7 @@
 <?php
 
 include_once("./model/Categories.php");
+include_once("./libraries/jwt_utils.php");
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -11,7 +12,7 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = explode( '/', $uri );
 
-// all of our endpoints start with /person
+// all of our endpoints start with /categories
 // everything else results in a 404 Not Found
 if ($uri[4] !== 'categories') {
     header("HTTP/1.1 404 Not Found");
@@ -23,6 +24,25 @@ $categoryId = null;
 if (isset($uri[5])) {
     $categoryId = (int) $uri[5];
 }
+
+
+/*
+ * En este archivo se hacen las acciones a la tabla categories (POST, PUT, DELETE y GET)
+ */
+
+/* Verificar que el token de autorizacion sea valido */
+
+$bearer_token = get_bearer_token();
+
+//echo $bearer_token;
+
+$is_jwt_valid = is_jwt_valid($bearer_token);
+
+if(!$is_jwt_valid) {
+
+    echo json_encode(array('error' => 'Access denied'));
+    exit();
+} 
 
 $method = $_SERVER["REQUEST_METHOD"];
 

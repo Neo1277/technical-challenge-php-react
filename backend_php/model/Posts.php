@@ -1,15 +1,10 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 require_once 'Connection.php';
 
 /**
- * Description of Wishers
+ * Description of Posts
  *
- * @author fguzmanr
  */
 class Posts {
 
@@ -20,7 +15,6 @@ class Posts {
     private $slug;
     private $short_text;
     private $large_text;
-    private $image;
 
 
     public function __construct() {
@@ -31,14 +25,13 @@ class Posts {
     public function register(
         $category_id, $title, 
         $slug, $short_text, 
-        $large_text, $image
+        $large_text
     ) {
         $this->category_id = $category_id;
         $this->title = $title;
         $this->slug = $slug;
         $this->short_text = $short_text;
         $this->large_text = $large_text;
-        $this->image = $image;
 
         $datetime = date("Y-m-d h:i:s");
 
@@ -50,7 +43,6 @@ class Posts {
                     ."slug, "
                     ."short_text, "
                     ."large_text, "
-                    ."image, "
                     ."created_on"
                 .") "
                 ."VALUES("
@@ -59,7 +51,6 @@ class Posts {
                     ."'{$this->slug}',"
                     ."'{$this->short_text}',"
                     ."'{$this->large_text}',"
-                    ."'{$this->image}',"
                     ."'{$datetime}'"
                 .")";
         
@@ -70,14 +61,13 @@ class Posts {
     public function updatePost(
         $id, $category_id, $title, 
         $slug, $short_text, 
-        $large_text, $image
+        $large_text
     ) {
         $this->category_id = $category_id;
         $this->title = $title;
         $this->slug = $slug;
         $this->short_text = $short_text;
         $this->large_text = $large_text;
-        $this->image = $image;
 
         $datetime = date("Y-m-d h:i:s");
 
@@ -88,7 +78,6 @@ class Posts {
                 ."slug = '{$this->slug}', "
                 ."short_text = '{$this->short_text}', "
                 ."large_text = '{$this->large_text}', "
-                ."image = '{$this->image}', "
                 ."updated_on = '{$datetime}' "
                 ."WHERE id = '{$id}'";
         
@@ -108,9 +97,10 @@ class Posts {
 
     public function getAll() {
 
-        $query = "SELECT * "
-                ."FROM {$this->table_name} "
-                ."ORDER BY id ASC";
+        $query = "SELECT p.*, c.name as category "
+                ."FROM {$this->table_name} p "
+                ."LEFT JOIN categories c ON c.id = p.category_id "
+                ."ORDER BY p.id ASC";
         $conn = new Connection();
         return $conn->query($query);
     }

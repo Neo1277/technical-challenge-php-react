@@ -12,7 +12,7 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = explode( '/', $uri );
 
-// all of our endpoints start with /person
+// all of our endpoints start with /posts
 // everything else results in a 404 Not Found
 if ($uri[4] !== 'posts') {
     header("HTTP/1.1 404 Not Found");
@@ -25,6 +25,22 @@ if (isset($uri[5])) {
     $postId = (int) $uri[5];
 }
 
+/*
+ * En este archivo se hacen las acciones a la tabla posts (POST, PUT, DELETE y GET)
+ */
+
+/* Verificar que el token de autorizacion sea valido */
+$bearer_token = get_bearer_token();
+
+//echo $bearer_token;
+
+$is_jwt_valid = is_jwt_valid($bearer_token);
+
+if(!$is_jwt_valid) {
+
+    echo json_encode(array('error' => 'Access denied'));
+    exit();
+} 
 
 $method = $_SERVER["REQUEST_METHOD"];
 
@@ -32,24 +48,10 @@ $method = $_SERVER["REQUEST_METHOD"];
 $post = new Posts();
 
 if ($method == 'GET') {
-  /*$teams_data = $teams->getAll();
-  echo json_encode($teams_data);*/
-  /*
-  $bearer_token = get_bearer_token();
 
-  echo $bearer_token;
-
-  $is_jwt_valid = is_jwt_valid($bearer_token);
-
-  if($is_jwt_valid) {
-
-    echo json_encode(array('error' => 'Access granted'));
-  } else {
-    echo json_encode(array('error' => 'Access denied'));
-  }*/
   $posts = $post->getAll();
   echo json_encode($posts);
-
+  
 }
 else if ($method == 'POST') {
   $json = file_get_contents('php://input'); // Returns data from the request body
@@ -61,8 +63,7 @@ else if ($method == 'POST') {
       $post_data["title"],
       $post_data["slug"],
       $post_data["short_text"],
-      $post_data["large_text"],
-      $post_data["image"]
+      $post_data["large_text"]
     );
 
     $err = array(
@@ -125,8 +126,7 @@ else if ($method == 'PUT') {
       $post_data["title"],
       $post_data["slug"],
       $post_data["short_text"],
-      $post_data["large_text"],
-      $post_data["image"]
+      $post_data["large_text"]
     );    
 
     $err = array(

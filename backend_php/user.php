@@ -12,19 +12,16 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = explode( '/', $uri );
 
-// all of our endpoints start with /person
+// all of these endpoints start with /user
 // everything else results in a 404 Not Found
 if ($uri[4] !== 'user') {
     header("HTTP/1.1 404 Not Found");
     exit();
 }
 
-// the user id is, of course, optional and must be a number:
-/*$userId = null;
-if (isset($uri[5])) {
-    $userId = (int) $uri[5];
-}
-*/
+/*
+ * En este archivo se hacen las acciones: login y tegistro de usuario
+ */
 
 $resource = $uri[5];
 
@@ -46,11 +43,20 @@ if($resource == 'login'){
 
       if(!empty($login_user)){
         $headers = array('alg'=>'HS256','typ'=>'JWT');
-        $payload = array('username'=>$user_data["email_address"], 'exp'=>(time() + 60));
+        $payload = array('username'=>$user_data["email_address"], 'exp'=>(time() + 60 * 60 ));
 
         $jwt = generate_jwt($headers, $payload);
+
+        $response = array(
+            'success' => true,
+            'token' => $jwt,
+            'user_id' => (int)$login_user[0]['id'],
+            'name' => $login_user[0]['name'],
+            'user_type' => $login_user[0]['user_type']
+        );
         
-        echo json_encode(array('token' => $jwt));
+        echo json_encode($response);
+
       }else{
         $err = array(
           "response" => array(
@@ -104,8 +110,7 @@ if($resource == 'login'){
         $user_data["name"],
         $user_data["email_address"],
         $user_data["password"],
-        $user_data["cell_phone_number"],
-        $user_data["user_type"]
+        $user_data["cell_phone_number"]
       );
 
       $err = array(

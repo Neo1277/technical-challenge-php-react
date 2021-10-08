@@ -31,7 +31,7 @@ class Users {
     public function register(
         $name, $email_address, 
         $password, $cell_phone_number, 
-        $user_type
+        $user_type="1"
     ) {
         $this->name = $name;
         $this->email_address = $email_address;
@@ -114,7 +114,7 @@ class Users {
         $this->email_address = $email_address;
         $this->password = md5($password);
 
-        $query = "SELECT id, name "
+        $query = "SELECT id, name, user_type "
                 . "FROM users "
                 . "WHERE email_address='{$this->email_address}' "
                 . "AND password='{$this->password}' "
