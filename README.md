@@ -30,6 +30,10 @@ yarn start
 ```
 http://localhost:3000/index
 ``` 
+*   Si tienen la parte del lado del servidor (php) en un directorio distinto deben cambiar la ruta en la variable global de reactjs para conectar el frontend con el backend:
+```
+technical-challenge-php-react\frontend_reactjs\src\shared\baseUrl.js
+``` 
 
 ## Instrucciones de uso ##
 
