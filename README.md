@@ -18,7 +18,7 @@ technical-challenge-php-react\backend_php\config.php
 ```
 technical-challenge-php-react\frontend_reactjs
 ``` 
-*   En este directorio se debe ejecutar el siguiente comando en la consola para instalar las dependencias de ractjs con yarn:
+*   En este directorio se debe ejecutar el siguiente comando en la consola para instalar las dependencias de reactjs con yarn:
 ```
 yarn install
 ``` 
